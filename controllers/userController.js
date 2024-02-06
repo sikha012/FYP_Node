@@ -51,20 +51,9 @@ const register = (req, res) => {
                             });
                         }
                         else{
-                            const randomToken = randomstring.generate();
-                            conn.query('UPDATE userprofiles set token=? where user_email=?',[randomToken,req.body.email],function(error,result,fields){
-                                if(error){
-                                    console.error(error);
-                                    // return res.status(400).send({
-                                    //     msg: err
-                                    // });
-    
-                                }
-                            });
-                        return res.status(200).send({
-                            msg : 'Signed Up Successfully',
-                        });
-                        }
+                            
+                           
+                        
 
                         let mailSubject = 'Mail Verification';
                         const randomToken = randomstring.generate();
@@ -72,15 +61,19 @@ const register = (req, res) => {
                         Please <a href = "http://localhost:8001/mail-verification?token='+randomToken+'">Verify</a> your Mail';
                         sendMail(req.body.email, mailSubject, content);
                             
-                        // conn.query('UPDATE userprofiles set token=? where user_email=?',[randomToken,req.body.email],function(error,result,fields){
-                        //     if(error){
-                        //         console.error(error);
-                        //         // return res.status(400).send({
-                        //         //     msg: err
-                        //         // });
+                        conn.query('UPDATE userprofiles set token=? where user_email=?',[randomToken,req.body.email],function(error,result,fields){
+                            if(error){
+                                console.error(error);
+                                return res.status(400).send({
+                                    msg: err
+                                });
 
-                        //     }
-                        // });
+                            }
+                        });
+                        return res.status(200).send({
+                            msg : 'Signed Up Successfully',
+                        });
+                        }
                         
                     });
                     }
