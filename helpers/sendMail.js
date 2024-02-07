@@ -12,7 +12,7 @@ const sendMail = async (email,mailSubject, content) => {
             requireTLS:true,
             auth: {
                 user: 'sikhakunwar07@gmail.com',
-                pass: 'poigzghcihevblju'
+                pass: 'capwoukycskzdqsj'
             }
         });
 

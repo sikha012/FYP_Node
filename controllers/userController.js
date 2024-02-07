@@ -186,7 +186,7 @@ const forgetPassword = (req, res)=>{
             let mailSubject = 'Forget Password';
 
             const randomString = randomstring.generate();
-            let content = '<p> Hi, '+result[0].username+' \
+            let content = '<p> Hi, '+result[0].user_name+' \
              Please <a href="http://localhost:8001/forget-password?token='+randomString+'"> Click here</a> to reset your password</p>\
             ';
             sendMail(email,mailSubject,content);
@@ -244,6 +244,20 @@ const forgetPasswordLoad = (req, res) => {
     }
 }
 
+const resetPassword = (req, res) => {
+    if (req.body.password != req.body.confirm_password) {
+        res.render('forget-password', {error_message: `Passwords don't match!`, user: {user_id: req.body.id, user_email: req.body.email}});
+    }
+    bcrypt.hash(req.body.confirm_password, 10, (err, hash) => {
+        if(err) {
+            console.log(err);
+        }
+        conn.query(`DELETE FROM password_reset WHERE user_email = '${req.body.user_email}'`);
+        conn.query(`UPDATE userprofiles SET user_password = '${hash}' WHERE user_id = '${req.body.user_id}'`);
+        res.render('reset-message', {message: 'Password Successfully Reset!'});       
+    })
+};
+
 const updateProfile =(req,res)=>{
 
     try{
@@ -290,5 +304,6 @@ module.exports = {
     verifyMail,
     forgetPassword,
     forgetPasswordLoad,
+    resetPassword,
     updateProfile
 };
