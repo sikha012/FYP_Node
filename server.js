@@ -11,6 +11,7 @@ require('./connection/db.js');
 
 const  userRoute = require('./routes/userRoute.js');
 const  webRoute = require('./routes/webRoute.js');
+const petCategoryRoute = require('./routes/petCategoryRoute.js');
 
 const app = express();
 app.use(express.json());
@@ -20,6 +21,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(cors());
 app.use('/', userRoute);
 app.use('/', webRoute);
+app.use('/', petCategoryRoute);
 
 //error handling
 app.use((err,req,res,next)=>{
