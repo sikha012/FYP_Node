@@ -37,7 +37,7 @@ PetCategory.create = (newCategory, result) => {
 
 PetCategory.updateById = (id, petCategory, result) => {
     conn.query(
-        "UPDATE petcategories SET petCategoryName = ? WHERE petcategory_id = ?",
+        "UPDATE petcategories SET petCategory_name = ? WHERE petcategory_id = ?",
         [petCategory.petCategoryName, id], // Removed petBreed
         (err, res) => {
             if (err) {
