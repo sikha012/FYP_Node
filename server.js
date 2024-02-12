@@ -13,6 +13,7 @@ const  userRoute = require('./routes/userRoute.js');
 const  webRoute = require('./routes/webRoute.js');
 const petCategoryRoute = require('./routes/petCategoryRoute');
 const petProfileRoute = require('./routes/petProfileRoute');
+const productCategoryRoute = require('./routes/productCategoryRoute');
 
 const app = express();
 app.use(express.json());
@@ -24,6 +25,7 @@ app.use('/', userRoute);
 app.use('/', webRoute);
 app.use('/', petCategoryRoute);
 app.use('/', petProfileRoute);
+app.use('/', productCategoryRoute);
 
 //error handling
 app.use((err,req,res,next)=>{
