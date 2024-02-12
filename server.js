@@ -14,6 +14,8 @@ const  webRoute = require('./routes/webRoute.js');
 const petCategoryRoute = require('./routes/petCategoryRoute');
 const petProfileRoute = require('./routes/petProfileRoute');
 const productCategoryRoute = require('./routes/productCategoryRoute');
+const productSellerRoute = require('./routes/productSellerRoute');
+const productRoute = require('./routes/productRoute');
 
 const app = express();
 app.use(express.json());
@@ -26,6 +28,8 @@ app.use('/', webRoute);
 app.use('/', petCategoryRoute);
 app.use('/', petProfileRoute);
 app.use('/', productCategoryRoute);
+app.use('/', productSellerRoute);
+app.use('/', productRoute);
 
 //error handling
 app.use((err,req,res,next)=>{
