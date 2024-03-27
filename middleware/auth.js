@@ -11,9 +11,7 @@ const isAuthorize = async(req,res,next) => {
                 }
             );
         }
-        next(
-
-        );//run if the token is present
+        next();//run if the token is present
 
     }catch(error){
         console.log(error.message);

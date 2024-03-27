@@ -17,10 +17,17 @@ const storage = multer.diskStorage({
 });
 
 const filefilter = (req, file, cb) => {
-    const fileTypes = /jpeg|jpg|png/;
+    const fileTypes = /jpeg|jpg|png|octet-stream/;
     const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    console.log(file.originalname);
+    console.log(file.mimetype);
+    console.log(path.extname(file.originalname).toLowerCase());
+    console.log(extname);
+    console.log(`fine 1`);
     const mimetype = fileTypes.test(file.mimetype);
-    if (mimetype && extname) {
+    console.log(mimetype);
+    console.log(`fine 2`);
+    if (extname) {
         return cb(null, true);
     } else {
         cb('Error: Invalid Image Type! Only JPEG, JPG, and PNG supported');
@@ -56,6 +63,8 @@ router.put('/product/:productId', (req, res) => {
 router.get('/product/:productId', productController.getProductById);
 
 router.get('/product', productController.getAllProducts);
+
+router.get('/product/seller/:sellerId', productController.getAllProducts);
 
 router.delete('/product/:productId', productController.deleteProductById);
 

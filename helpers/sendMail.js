@@ -1,40 +1,37 @@
 
-const nodemailer = require('nodemailer');
+var nodemailer = require('nodemailer');
 
-// const {SMTP_MAIL, SMTP_PASSWORD} = process.env;
+async function sendEmail(params, callback){
 
-const sendMail = async (email,mailSubject, content) => {
-    try{
-        const transport = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure:false,
-            requireTLS:true,
-            auth: {
-                user: 'sikhakunwar07@gmail.com',
-                pass: 'capwoukycskzdqsj'
-            }
-        });
-
-        const mailOptions = {
-            from: 'sikhakunwar07@gmail.com',
-            to:email,
-            subject:mailSubject,
-            html:content
+    const transport = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure:false,
+        requireTLS:true,
+        auth: {
+            user: 'sikhakunwar07@gmail.com',
+            pass: 'capwoukycskzdqsj'
         }
-        // transport.sendMail(mailOptions, function(error, info){
-        //     if(error){
-        //         console.log(error);
-        //     }
-        //     else{
-        //         console.log('Mail sent successfully: ', info.respose);
-        //     }
-        // });
-        const info = await transport.sendMail(mailOptions);
-        console.log('Mail sent successfully: ', info.response);
-    }catch(error){
-        console.log(error.message);
-    }
+    });
+    
+    const mailOptions = {
+        from: 'sikhakunwar07@gmail.com',
+        to:params.email,
+        subject:params.subject,
+        text: params.body,
+    };
 
+    transport.sendMail(mailOptions, function(error,info){
+        if(error){
+            return callback(error);
+        }
+        else {
+            return callback(null, info.response);
+        }
+    });
 }
-module.exports = sendMail;
+
+
+module.exports = {
+    sendEmail
+}

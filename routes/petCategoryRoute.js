@@ -2,8 +2,6 @@ const express = require('express');
 
 const router = express.Router();
 
-const path = require('path');
-
 const {create, getAll, getById, updateById, deleteById, deleteAll} = require('../controllers/petCategoryController');
 
 // Pet Category Routes

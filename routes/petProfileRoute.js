@@ -7,6 +7,7 @@ const path = require('path');
 
 const petProfileController = require('../controllers/petProfileController');
 
+const {petProfileCreationValidation} = require('../helpers/validation.js');
 
 const storage = multer.diskStorage({
 
@@ -21,7 +22,7 @@ const storage = multer.diskStorage({
 });
 
 const filefilter = (req,file,cb) => {
-    const fileTypes = /jpeg|jpg|png/;
+    const fileTypes = /jpeg|jpg|png|octet-stream/;
     const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = fileTypes.test(file.mimetype);
     if(mimetype && extname) {
@@ -62,11 +63,19 @@ router.put('/petProfile/:petId', (req, res) => {
 // Get a single PetProfile by ID
 router.get('/petProfile/:petId', petProfileController.getPetProfileById);
 
+router.get('/petProfile/owner/:ownerId', petProfileController.getAllByOwnerId);
+
+router.post('/petProfile/history', petProfileController.createPetHistory);
+
+router.get('/petProfile/history/:petId', petProfileController.getHistoryByPetId);
+
 // Get all PetProfiles
 router.get('/petProfile', petProfileController.getAllPetProfiles);
 
 // Delete a PetProfile by ID
-router.delete('/petProfile/:petId', petProfileController.deletePetProfileById);
+router.delete('/petProfile/:petId', petProfileController.deleteByPetId);
+
+router.delete('/petProfile/history/:historyId', petProfileController.deleteHistoryById);
 
 // Delete all PetProfiles
 router.delete('/petProfile', petProfileController.deleteAllPetProfiles);

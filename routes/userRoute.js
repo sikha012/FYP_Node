@@ -4,7 +4,7 @@ const router = express.Router();
 
 
 const path = require('path');
-const multer = require ('multer');
+const multer = require('multer');
 
 const storage = multer.diskStorage({
 
@@ -16,12 +16,14 @@ const storage = multer.diskStorage({
         cb(null,imageName);
 
     }
+
 });
 
 const filefilter = (req,file,cb)=>{
-   (file.mimetype == 'image/jpeg' || file.mimetype == 'image/png')?
+   (file.mimetype == 'image/jpeg' || file.mimetype == 'image/png' || 'image/octet-stream')?
    cb(null,true):cb(null,false);
-}
+};
+
 const upload = multer({
     
     storage:storage,
@@ -33,12 +35,21 @@ const {signUpValidation,loginValidation, forgetValidation, updateProfileValidati
 const userController = require('../controllers/userController.js');
 const isAuth = require('../middleware/auth.js');
 
-router.post('/register', signUpValidation, userController.register);
-router.post('/login',loginValidation, userController.login);
+router.post('/register',signUpValidation, userController.register);
 
-router.get('/get-user', isAuth.isAuthorize, userController.getUser);
+router.post('/verify-otp', userController.verifyOTP);
+
+router.post('/login',loginValidation, userController.login);
+router.post('/refresh-token', userController.verifyRefreshToken);
+// router.get('/user', userController.verifyAccessToken, (req, res) => {
+//     const user_id = req.user_id;
+//     res.send({userId: user_id});
+// });
+
+router.get('/get-user', userController.verifyAccessToken, userController.getUser);
 
 router.post('/forget-password', forgetValidation, userController.forgetPassword);
 
-router.post('/update-profile', upload.single('image'), updateProfileValidation, isAuth.isAuthorize, userController.updateProfile);
+router.post('/update-profile/:userId', upload.single('image'), updateProfileValidation, isAuth.isAuthorize, userController.updateProfile);
+
 module.exports = router;

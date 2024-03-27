@@ -5,7 +5,6 @@ exports.createProduct = (req, res) => {
         return res.status(400).send({ message: "Product data is missing!" });
     }
 
-    // Create a new product object
     const newProduct = new Product({
         name: req.body.name,
         price: req.body.price,
@@ -33,15 +32,17 @@ exports.updateProduct = (req, res) => {
         return res.status(400).send({ message: "Product data is missing!" });
     }
 
-    const productId = req.params.productId; // Assuming you're passing the ID as a route parameter
+    const productId = req.params.productId;
+    const prevFileName = req.body.previousFile
+    // console.log(`${req.file.filename}`);
+    // console.log(`${req.file}`);
 
-    // Object to hold updated data
     const updatedProduct = {
         name: req.body.name,
         price: req.body.price,
         stockQuantity: req.body.stockQuantity,
         description: req.body.description,
-        image: req.file.filename,
+        image: req.file ? req.file.filename : prevFileName,
         petCategoryId: req.body.petCategoryId,
         productCategoryId: req.body.productCategoryId,
         productSellerId: req.body.productSellerId
@@ -58,7 +59,7 @@ exports.updateProduct = (req, res) => {
                     message: "Error updating Product with id " + productId
                 });
             }
-        } else res.send(data);
+        } else res.status(200).send(data);
     });
 };
 
@@ -76,6 +77,17 @@ exports.getProductById = (req, res) => {
 
 exports.getAllProducts = (req, res) => {
     Product.getAll((err, data) => {
+        if (err) {
+            res.status(500).send({ message: err.message || "Some error occurred while retrieving products." });
+        } else {
+            res.send(data);
+        }
+    });
+};
+
+exports.getAllProductsForSeller = (req, res) => {
+    const seller = req.body.seller;
+    Product.getAllForSeller(seller, (err, data) => {
         if (err) {
             res.status(500).send({ message: err.message || "Some error occurred while retrieving products." });
         } else {

@@ -16,6 +16,8 @@ const petProfileRoute = require('./routes/petProfileRoute');
 const productCategoryRoute = require('./routes/productCategoryRoute');
 const productSellerRoute = require('./routes/productSellerRoute');
 const productRoute = require('./routes/productRoute');
+const orderRoute = require('./routes/orderRoute.js');
+const userPaymentRoute = require('./routes/userPaymentRoute.js');
 
 const app = express();
 app.use(express.json());
@@ -30,6 +32,8 @@ app.use('/', petProfileRoute);
 app.use('/', productCategoryRoute);
 app.use('/', productSellerRoute);
 app.use('/', productRoute);
+app.use('/', orderRoute);
+app.use('/', userPaymentRoute);
 
 //error handling
 app.use((err,req,res,next)=>{
