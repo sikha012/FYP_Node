@@ -45,6 +45,25 @@ exports.createNewOrder = (req,res) => {
     });
 }
 
+exports.getOrdersToDeliverByUserId = (req, res) => {
+    const userId = req.params.userId;
+
+    OrderDetails.getOrdersToDeliverByUserId(userId, (error, data) => {
+        if (error) {
+            if (error.kind === "not_found") {
+                return res.status(404).send({
+                    message: `No order details found with user id ${userId}.`
+                });
+            } else {
+                return res.status(500).send({
+                    message: `Error retrieving order details for user id ${userId}`
+                });
+            }
+        }
+        res.status(200).send(data);
+    });
+}
+
 exports.deleteOrder = (req, res) => {
     const orderId = req.params.orderId;
 

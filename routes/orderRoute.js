@@ -4,11 +4,12 @@ const router = express.Router();
 
 const path = require('path');
 
-const {createNewOrder, deleteOrder, payForOrder} = require('../controllers/orderController');
+const orderController = require('../controllers/orderController');
 
-router.post('/createorder', createNewOrder);
-router.put('/order/cancel/:orderId', deleteOrder);
-router.put('/order/pay/:orderId', payForOrder);
+router.post('/createorder', orderController.createNewOrder);
+router.put('/order/cancel/:orderId', orderController.deleteOrder);
+router.put('/order/pay/:orderId', orderController.payForOrder);
+router.get('/orderdetails/seller/:userId', orderController.getOrdersToDeliverByUserId);
 
 
 module.exports = router;

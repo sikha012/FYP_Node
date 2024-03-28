@@ -5,7 +5,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
-
+const  {initializeApp, applicationDefault} = require('firebase-admin/app');
 
 require('./connection/db.js');
 
@@ -18,11 +18,19 @@ const productSellerRoute = require('./routes/productSellerRoute');
 const productRoute = require('./routes/productRoute');
 const orderRoute = require('./routes/orderRoute.js');
 const userPaymentRoute = require('./routes/userPaymentRoute.js');
+const startBackgroundTasks = require('./helpers/backgroundTasks.js');
+
+process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
 const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
+
+initializeApp({
+    credential: applicationDefault(),
+    projectId: 'happytails-app'
+});
 
 app.use(cors());
 app.use('/', userRoute);
@@ -45,6 +53,7 @@ app.use((err,req,res,next)=>{
     });
 });
 
-app.listen(8001, ()=> console.log(
-    'Server is running on port 8001'
-));
+app.listen(8001, () => {
+    console.log('Server is running on port 8001');
+    startBackgroundTasks();
+});
