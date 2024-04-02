@@ -64,7 +64,7 @@ router.get('/product/:productId', productController.getProductById);
 
 router.get('/product', productController.getAllProducts);
 
-router.get('/product/seller/:sellerId', productController.getAllProducts);
+router.get('/product/seller/:sellerId', productController.getAllProductsForSeller);
 
 router.delete('/product/:productId', productController.deleteProductById);
 

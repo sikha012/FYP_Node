@@ -34,7 +34,7 @@ const register = (req, res) => {
                 });
             } else {
                 // Call sendOTP here
-                otpService.sendOTP(req.body.email, (error, results) => {
+                otpService.sendOTP(req.body.email, req.body.username, (error, results) => {
                     if (error) {
                         return res.status(500).send({
                             message: "Error sending OTP",
@@ -51,14 +51,16 @@ const register = (req, res) => {
                         }
 
                         const userName = conn.escape(req.body.username);
+                        const token = req.body.token;
                         const userLocation = conn.escape(req.body.location);
                         const userContact = conn.escape(req.body.contact);
                         const userType = conn.escape(req.body.userType);
 
-                        const sql = `INSERT INTO userprofiles (user_name, user_email, user_password, user_location, user_contact, user_type) VALUES (${userName}, ${userEmail}, ${conn.escape(hash)}, ${userLocation}, ${userContact}, ${userType})`;
+                        const sql = `INSERT INTO userprofiles (user_name, user_email, token, user_password, user_location, user_contact, user_type) VALUES (${userName}, ${userEmail}, '${token}', ${conn.escape(hash)}, ${userLocation}, ${userContact}, ${userType})`;
 
                         conn.query(sql, (insertErr) => {
                             if (insertErr) {
+                                console.log(insertErr);
                                 return res.status(500).send({
                                     message: insertErr.sqlMessage || 'Database error'
                                 });
@@ -77,6 +79,21 @@ const register = (req, res) => {
     );
 };
 
+const sendOTP = (req, res) => {
+    otpService.sendOTP(req.body.email, req.body.username, (error, results) => {
+        if(error){
+            return res.status(400).send({
+                message:"error",
+                data:error,
+            });
+        }
+
+        return res.status(200).send({
+            message: 'Resent verification mail',
+            data:results,
+        });
+    });
+}
 
 const verifyOTP = (req, res) => {
     otpService.verifyOTP(req.body, (error, results)=>{
@@ -86,10 +103,24 @@ const verifyOTP = (req, res) => {
                 data:error,
             });
         }
-        return res.status(200).send({
-            message:"Success",
-            data:results,
-        });
+
+        if(results.success == "true") {
+            console.log(`Email in the controller : ${req.body.email}`);
+            const emailWithDot = req.body.email;
+            let atIndex = emailWithDot.indexOf('@');
+            let localPart = emailWithDot.substring(0, atIndex);
+            let domainPart = emailWithDot.substring(atIndex);
+        
+            localPart = localPart.replace('.', '');
+        
+            const emailWithoutFirstDot = localPart + domainPart;
+            console.log(emailWithoutFirstDot);
+            conn.query(`UPDATE userprofiles SET isVerified = 1 WHERE user_email = '${emailWithoutFirstDot}';`);
+            return res.status(200).send({message: "Email verified successfully"});
+        } else if (results.success == "false") {
+            return res.status(400).send({message: "Invalid OTP"});
+        }
+        
     });
 };
 
@@ -386,6 +417,7 @@ const updateProfile =(req,res)=>{
 
 module.exports = {
     register,
+    sendOTP,
     verifyOTP,
     login,
     verifyRefreshToken,

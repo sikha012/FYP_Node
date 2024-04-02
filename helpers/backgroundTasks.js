@@ -18,9 +18,15 @@ const startBackgroundTasks = async () => {
       console.log(`Checking for records with event_date = ${targetDate}`);
 
       // Fetch records where the event_date is daysAhead days ahead
-      const query = `SELECT PH.history_id AS history_id, PH.event_name AS event_name, PH.event_description AS event_description, PH.event_date AS event_date, P.pet_name AS pet_name
+      const query = `SELECT PH.history_id AS history_id, 
+                    PH.event_name AS event_name, 
+                    PH.event_description AS event_description, 
+                    PH.event_date AS event_date, 
+                    P.pet_name AS pet_name, 
+                    U.token 
                         FROM pethistory PH
-                        JOIN petprofiles P ON PH.pet_id = P.pet_id
+                        JOIN petprofiles P ON PH.pet_id = P.pet_id 
+                        INNER JOIN userprofiles U ON P.owner_id = U.user_id 
                         WHERE PH.event_date = ?;`;
       conn.query(query, [targetDate], async (error, results) => {
         if (error) {
@@ -37,7 +43,7 @@ const startBackgroundTasks = async () => {
 
           try {
             let notificationDate = new Date().toISOString();
-            const response = await sendNotification(`dUR6eHK-QzGqVK-U8-LUF7:APA91bEh-OueJXzd0Rgl555CoDaxg64Z78JyIg8O-k2rxBvnJvE7c5aabOgx0t5VxZ7q23IJf-iYxytCV3traDnZv14G4owKRBHfoXFAY8rZu326GFBCjUQCKwRJlkRvXG93NP_nvcdw`, // Assuming each row has an fcmtoken field
+            const response = await sendNotification(`${row.token}`,
                                                     "Vaccination Reminder", 
                                                     reminderMessage, 
                                                     {

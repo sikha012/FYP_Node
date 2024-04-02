@@ -89,11 +89,11 @@ OrderDetails.createOrderDetails = (newOrderDetails, result) => {
 }
 
 OrderDetails.getOrdersToDeliverByUserId = (userId, result) => {
-    conn.query(`SELECT OD.*, O.user_id, O.order_date, O.total_amount, U.user_name, U.user_contact, U.user_location, P.product_name, P.product_image 
+    conn.query(`SELECT OD.*, O.user_id, O.order_date, O.total_amount, U.token, U.user_name, U.user_contact, U.user_location, P.product_name, P.product_image 
     FROM order_details OD JOIN orders O ON OD.order_id = O.order_id 
     JOIN userprofiles U ON O.user_id = U.user_id 
     JOIN products P ON OD.product_id = P.product_id 
-    WHERE P.seller_id = 54 AND O.order_status = 'Paid';`, 
+    WHERE P.seller_id = ? AND O.order_status = 'Paid';`, 
     userId, 
     (err, res) => {
         if (err) {
@@ -112,9 +112,60 @@ OrderDetails.getOrdersToDeliverByUserId = (userId, result) => {
     });
 }
 
-OrderDetails.updateOrderStatus = (userId, orderId, productId, status, result) => {
-    conn.query("UPDATE orderdetails OD SET OD.status = ? JOIN products p ON od.product_id = p.product_id WHERE p.seller_id = ? AND OD.order_id = ? AND OD.product_id = ?", 
-        [status, userId, orderId, productId], 
+OrderDetails.getOrdersToReceiveByUser = (userId, result) => {
+    conn.query(`SELECT OD.*, O.user_id, O.order_date, O.total_amount,
+                S.token, S.user_name, S.user_contact, S.user_location,
+                P.product_name, P.product_image
+            FROM order_details OD
+            JOIN orders O ON OD.order_id = O.order_id
+            JOIN products P ON OD.product_id = P.product_id
+            JOIN userprofiles U ON O.user_id = U.user_id
+            JOIN userprofiles S ON P.seller_id = S.user_id
+            WHERE O.user_id = 53 AND O.order_status = 'Paid';`, 
+    userId, 
+    (err, res) => {
+        if (err) {
+            console.log(`Error: ${err}`);
+            result(err, null);
+            return;
+        }
+
+        if (res.length) {
+            console.log("Order Details: ", res);
+            result(null, res);
+            return;
+        }
+
+        result({ kind: "not_found" }, null);
+    });
+}
+
+OrderDetails.getOrdersToDeliver = (result) => {
+    conn.query(`SELECT OD.*, O.user_id, O.order_date, O.total_amount, U.user_name, U.token, U.user_contact, U.user_location, P.product_name, P.product_image 
+    FROM order_details OD JOIN orders O ON OD.order_id = O.order_id 
+    JOIN userprofiles U ON O.user_id = U.user_id 
+    JOIN products P ON OD.product_id = P.product_id 
+    WHERE O.order_status = 'Paid' AND (OD.status = 'Shipped' OR OD.status = 'On the way' OR OD.status = 'Delivered');`, 
+    (err, res) => {
+        if (err) {
+            console.log(`Error: ${err}`);
+            result(err, null);s
+            return;
+        }
+
+        if (res.length) {
+            console.log("Order Details: ", res);
+            result(null, res);
+            return;
+        }
+
+        result({ kind: "not_found" }, null);
+    });
+}
+
+OrderDetails.updateOrderStatus = (status, orderDetailId, result) => {
+    conn.query("UPDATE order_details OD SET OD.status = ? WHERE OD.orderdetail_id = ?", 
+        [status, orderDetailId], 
         (err, res) => {
             if(err) {
                 console.log(`Error: ${err}`);

@@ -97,7 +97,7 @@ Product.getById = (id, result) => {
 };
 
 Product.getAll = (result) => {
-    conn.query("SELECT p.*, pe.petcategory_name, pd.productcategory_name, u.user_name AS seller_name"
+    conn.query("SELECT p.*, pe.petcategory_name, pd.productcategory_name, u.user_name AS seller_name, u.token as seller_token"
                 +" FROM products p JOIN petcategories pe ON p.petcategory_id = pe.petcategory_id "
                 +"JOIN productcategories pd ON p.productcategory_id = pd.productcategory_id "
                 +"JOIN userprofiles u ON p.seller_id = u.user_id WHERE p.is_deleted = 0",

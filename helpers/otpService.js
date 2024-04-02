@@ -6,7 +6,7 @@ const emailService = require("../helpers/sendMail");
 
 
 
-async function sendOTP(email, callback) {
+async function sendOTP(email, user, callback) {
     const otp = otpGenerator.generate(4, {
         digits: true,
         upperCaseAlphabets: false,
@@ -22,7 +22,7 @@ async function sendOTP(email, callback) {
     const hash = crypto.createHmac("sha256", key).update(data).digest("hex");
     const fullHash = `${hash}.${expires}`;
 
-    var otpMessage = `Dear Customer, ${otp} is the one-time password for login.`;
+    var otpMessage = `Dear ${user}, ${otp} is the one-time password for login.`;
 
     var model = {
         email: email, // Sending the original email
@@ -66,9 +66,9 @@ async function verifyOTP(params, callback) {
     console.log(newCalculateHash, `${newCalculateHash}.${expires}`);
 
     if (newCalculateHash === hashValue) {
-        return callback(null, "Success");
+        return callback(null, {success: "true"});
     }
-    return callback("Invalid OTP");
+    return callback(null, {success: "false"});
 }
 
 

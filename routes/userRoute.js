@@ -37,6 +37,8 @@ const isAuth = require('../middleware/auth.js');
 
 router.post('/register',signUpValidation, userController.register);
 
+router.post('/resend-otp', userController.sendOTP);
+
 router.post('/verify-otp', userController.verifyOTP);
 
 router.post('/login',loginValidation, userController.login);

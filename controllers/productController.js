@@ -86,7 +86,7 @@ exports.getAllProducts = (req, res) => {
 };
 
 exports.getAllProductsForSeller = (req, res) => {
-    const seller = req.body.seller;
+    const seller = req.params.sellerId;
     Product.getAllForSeller(seller, (err, data) => {
         if (err) {
             res.status(500).send({ message: err.message || "Some error occurred while retrieving products." });
