@@ -112,6 +112,73 @@ Product.getAll = (result) => {
     });
 };
 
+// Product.getAllForSeller = (sellerId, result) => {
+//     conn.query("SELECT p.*, pe.petcategory_name, pd.productcategory_name, u.user_name AS seller_name, u.token as seller_token"
+//                 +" FROM products p JOIN petcategories pe ON p.petcategory_id = pe.petcategory_id "
+//                 +"JOIN productcategories pd ON p.productcategory_id = pd.productcategory_id "
+//                 +"JOIN userprofiles u ON p.seller_id = u.user_id WHERE p.is_deleted = 0 AND p.seller_id = ?", 
+//                 sellerId,
+//         (err, res) => {
+//         if (err) {
+//             console.log(`Error: ${err}`);
+//             result(null, err);
+//             return;
+//         }
+//         console.log("Seller Products: ", res);
+//         result(null, res);
+//     });
+// };
+
+Product.getProductsAfterFilter = (filters, result) => {
+    let baseQuery = "SELECT p.*, pe.petcategory_name, pd.productcategory_name, u.user_name AS seller_name FROM products p " +
+                    "JOIN petcategories pe ON p.petcategory_id = pe.petcategory_id " +
+                    "JOIN productcategories pd ON p.productcategory_id = pd.productcategory_id " +
+                    "JOIN userprofiles u ON p.seller_id = u.user_id WHERE p.is_deleted = 0";
+    let filterConditions = [];
+    let queryValues = [];
+
+    if (filters.productCategoryId) {
+        filterConditions.push(" p.productcategory_id = ? ");
+        queryValues.push(filters.productCategoryId);
+    }
+
+    if (filters.petCategoryId) {
+        filterConditions.push(" p.petcategory_id = ? ");
+        queryValues.push(filters.petCategoryId);
+    }
+
+    if (filters.minPrice && filters.maxPrice) {
+        filterConditions.push(" p.product_price BETWEEN ? AND ? ");
+        queryValues.push(filters.minPrice, filters.maxPrice);
+    } else if (filters.minPrice) {
+        filterConditions.push(" p.product_price >= ? ");
+        queryValues.push(filters.minPrice);
+    } else if (filters.maxPrice) {
+        filterConditions.push(" p.product_price <= ? ");
+        queryValues.push(filters.maxPrice);
+    }
+
+    if (filters.productName) {
+        filterConditions.push(" p.product_name LIKE ? ");
+        queryValues.push(`%${filters.productName}%`);
+    }
+
+    if (filterConditions.length) {
+        baseQuery += " AND" + filterConditions.join(" AND ");
+    }
+
+    conn.query(baseQuery, queryValues, (err, res) => {
+        if (err) {
+            console.log(`Error: ${err}`);
+            result(null, err);
+            return;
+        }
+        console.log("Filtered Products: ", res);
+        result(null, res);
+    });
+};
+
+
 Product.getAllForSeller = (id, result) => {
     conn.query("SELECT p.*, pe.petcategory_name, pd.productcategory_name, sl.user_name"
                 +" FROM products p JOIN petcategories pe ON p.petcategory_id = pe.petcategory_id "

@@ -85,6 +85,39 @@ exports.getAllProducts = (req, res) => {
     });
 };
 
+// exports.getProductsForSeller = (req, res) => {
+//     Product.getById(req.params.sellerId, (err, data) => {
+//         if (err) {
+//             if (err.kind === "not_found") {
+//                 res.status(404).send({ message: `Not found Product with seller id ${req.params.sellerId}.` });
+//             } else {
+//                 res.status(500).send({ message: "Error retrieving Product with seller id " + req.params.sellerId });
+//             }
+//         } else res.send(data);
+//     });
+// };
+
+exports.getProductsAfterFilter = (req, res) => {
+    const filters = {
+        productCategoryId: req.body.productCategoryId,
+        petCategoryId: req.body.petCategoryId,
+        minPrice: req.body.minPrice,
+        maxPrice: req.body.maxPrice,
+        productName: req.body.productName
+    };
+
+    Product.getProductsAfterFilter(filters, (error, data) => {
+        if (error) {
+            res.status(500).send({
+                message: error.message || "Some error occurred while retrieving filtered products."
+            });
+        } else {
+            res.send(data);
+        }
+    });
+};
+
+
 exports.getAllProductsForSeller = (req, res) => {
     const seller = req.params.sellerId;
     Product.getAllForSeller(seller, (err, data) => {

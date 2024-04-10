@@ -50,8 +50,10 @@ router.post('/refresh-token', userController.verifyRefreshToken);
 
 router.get('/get-user', userController.verifyAccessToken, userController.getUser);
 
+router.post('/updateFCMtoken/:userId', forgetValidation, userController.updateFCMToken);
+
 router.post('/forget-password', forgetValidation, userController.forgetPassword);
 
-router.post('/update-profile/:userId', upload.single('image'), updateProfileValidation, isAuth.isAuthorize, userController.updateProfile);
+router.post('/update-profile/:userId', upload.single('image'), updateProfileValidation, userController.updateProfile);
 
 module.exports = router;

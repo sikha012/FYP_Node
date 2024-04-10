@@ -4,7 +4,7 @@ const sendNotification = async (fcmtoken, title, body, data) => {
     if (!fcmtoken || !title || !body) {
         throw new Error('Missing required parameters');
     }
-
+    console.log('FCM to send:', fcmtoken);
     const message = {
         notification: {
             title: title,

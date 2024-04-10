@@ -37,7 +37,7 @@ UserPayment.createPayment = (newPayment, token, result) => {
                 throw err;
             }
 
-            conn.query(`INSERT INTO user_payments (user_id, order_id, grand_total, payment_token) VALUES (?, ?, ?, ?)`, 
+            conn.query(`INSERT INTO userpayments (user_id, order_id, grand_total, payment_token) VALUES (?, ?, ?, ?)`, 
                        [newPayment.userId, newPayment.orderId, newPayment.grandTotal, token], 
                        (err, res) => {
                 if (err) {
@@ -55,11 +55,11 @@ UserPayment.createPayment = (newPayment, token, result) => {
                         });
                     }
 
-                    conn.query(`UPDATE products p JOIN (SELECT product_id, quantity FROM order_details 
+                    conn.query(`UPDATE products p JOIN (SELECT product_id, quantity FROM orderdetails 
                                 WHERE order_id = ? GROUP BY product_id) o 
                                 ON p.product_id = o.product_id 
                                 SET p.productstock_quantity = p.productstock_quantity - o.quantity 
-                                WHERE p.product_id IN (SELECT product_id FROM order_details WHERE order_id = ?)`, 
+                                WHERE p.product_id IN (SELECT product_id FROM orderdetails WHERE order_id = ?)`, 
                                 [newPayment.orderId, newPayment.orderId], (err, res) => {
                         if (err) {
                             return conn.rollback(() => {

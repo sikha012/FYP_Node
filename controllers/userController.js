@@ -79,6 +79,28 @@ const register = (req, res) => {
     );
 };
 
+const updateFCMToken = (req, res) => {
+    const userId = req.params.userId;
+    const newToken = req.body.token;
+
+    if (!userId || !newToken) {
+        return res.status(400).json({ message: "Missing user ID or new token." });
+    }
+
+    const sql = 'UPDATE userprofiles SET token = ? WHERE user_id = ?';
+
+    conn.query(sql, [newToken, userId], (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: 'Database error while updating FCM token', error: err });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "User not found." });
+        }
+        return res.status(200).json({ message: 'FCM token updated successfully.' });
+    });
+};
+
+
 const sendOTP = (req, res) => {
     otpService.sendOTP(req.body.email, req.body.username, (error, results) => {
         if(error){
@@ -419,11 +441,12 @@ module.exports = {
     register,
     sendOTP,
     verifyOTP,
+    updateFCMToken,
     login,
     verifyRefreshToken,
     verifyAccessToken,
     getUser,
-  verifyMail,
+    verifyMail,
     forgetPassword,
     forgetPasswordLoad,
     resetPassword,
