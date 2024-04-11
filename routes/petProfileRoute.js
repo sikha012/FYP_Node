@@ -9,6 +9,8 @@ const petProfileController = require('../controllers/petProfileController');
 
 const {petProfileCreationValidation} = require('../helpers/validation.js');
 
+const isAuth = require('../middleware/auth.js');
+
 const storage = multer.diskStorage({
 
     destination:function(req,file,cb){
@@ -39,7 +41,7 @@ const filefilter = (req,file,cb) => {
  }).single('petImage');
  
  // Create a new PetProfile
-router.post('/petProfile', (req, res) => {
+router.post('/petProfile', isAuth, (req, res) => {
     upload(req, res, (err) => {
         if(err) {
             res.status(400).send({ message: err });
@@ -50,7 +52,7 @@ router.post('/petProfile', (req, res) => {
 });
 
 // Update a PetProfile by ID
-router.put('/petProfile/:petId', (req, res) => {
+router.put('/petProfile/:petId', isAuth, (req, res) => {
     upload(req, res, (err) => {
         if(err) {
             res.status(400).send({ message: err });

@@ -17,7 +17,7 @@ exports.createPetProfile = (req, res) => {
         petName: req.body.petName,
         petAge: req.body.petAge,
         petCategoryId: req.body.petCategoryId,
-        ownerId: req.body.ownerId,
+        ownerId: req.user.id,
         petImage: req.file ? req.file.filename : null // Use null if no image is uploaded
     });
 

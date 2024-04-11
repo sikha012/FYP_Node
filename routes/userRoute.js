@@ -34,6 +34,7 @@ const {signUpValidation,loginValidation, forgetValidation, updateProfileValidati
 
 const userController = require('../controllers/userController.js');
 const isAuth = require('../middleware/auth.js');
+const { auth } = require('firebase-admin');
 
 router.post('/register',signUpValidation, userController.register);
 
@@ -48,12 +49,14 @@ router.post('/refresh-token', userController.verifyRefreshToken);
 //     res.send({userId: user_id});
 // });
 
-router.get('/get-user', userController.verifyAccessToken, userController.getUser);
+router.get('/get-user', isAuth, userController.getUser);
 
 router.post('/updateFCMtoken/:userId', forgetValidation, userController.updateFCMToken);
 
 router.post('/forget-password', forgetValidation, userController.forgetPassword);
 
-router.post('/update-profile/:userId', upload.single('image'), updateProfileValidation, userController.updateProfile);
+router.post('/update-profile/:userId', upload.single('image'), updateProfileValidation, isAuth, userController.updateProfile);
+
+router.post('/logout', isAuth, userController.logout);
 
 module.exports = router;

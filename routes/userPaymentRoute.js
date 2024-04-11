@@ -6,6 +6,8 @@ const path = require('path');
 
 const {createPayment} = require('../controllers/userPaymentController');
 
-router.post('/create-payment', createPayment);
+const isAuth = require('../middleware/auth.js');
+
+router.post('/create-payment', isAuth, createPayment);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
-const { ACCESS_TOKEN_SECRET } = process.env;
+const { JWT_SECRET } = process.env;
 
-const auth = (req, res, next) => {
+const isAuth = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(" ")[1];
 
@@ -11,7 +11,7 @@ const auth = (req, res, next) => {
         });
     }
 
-    jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
+    jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) {
             return res.status(403).send({
                 message: 'Invalid Access Token'
@@ -22,4 +22,4 @@ const auth = (req, res, next) => {
     });
 };
 
-module.exports = auth;
+module.exports = isAuth;

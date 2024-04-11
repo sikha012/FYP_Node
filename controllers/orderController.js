@@ -8,8 +8,9 @@ exports.createNewOrder = (req,res) => {
     }
     console.log(req.body);
     console.log(req.body.userId);
+    console.log(req.user.id);
     const newOrder = new Order({
-        userId: req.body.userId,
+        userId: req.user.id,
         orderDate: new Date(),
         totalAmount: req.body.totalAmount,
         orderStatus: 'Pending'

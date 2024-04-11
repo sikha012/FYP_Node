@@ -5,8 +5,9 @@ const router = express.Router();
 const path = require('path');
 
 const orderController = require('../controllers/orderController');
+const isAuth = require('../middleware/auth.js');
 
-router.post('/createorder', orderController.createNewOrder);
+router.post('/createorder', isAuth, orderController.createNewOrder);
 router.put('/order/cancel/:orderId', orderController.deleteOrder);
 router.put('/order/pay/:orderId', orderController.payForOrder);
 router.get('/orderdetails/deliver', orderController.getOrdersToDeliver);

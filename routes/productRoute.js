@@ -5,6 +5,7 @@ const multer = require('multer');
 const path = require('path');
 
 const productController = require('../controllers/productController');
+const isAuth = require('../middleware/auth.js');
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -40,7 +41,7 @@ const upload = multer({
     fileFilter: filefilter
 }).single('image');
 
-router.post('/product', (req, res) => {
+router.post('/product', isAuth, (req, res) => {
     upload(req, res, (err) => {
         if (err) {
             res.status(400).send({ message: err });
@@ -50,7 +51,7 @@ router.post('/product', (req, res) => {
     });
 });
 
-router.put('/product/:productId', (req, res) => {
+router.put('/product/:productId', isAuth, (req, res) => {
     upload(req, res, (err) => {
         if (err) {
             res.status(400).send({ message: err });
@@ -66,7 +67,7 @@ router.get('/product', productController.getAllProducts);
 
 router.post('/product/filter', productController.getProductsAfterFilter);
 
-router.get('/product/seller/:sellerId', productController.getAllProductsForSeller);
+router.get('/product/seller/:sellerId', isAuth, productController.getAllProductsForSeller);
 
 router.delete('/product/:productId', productController.deleteProductById);
 

@@ -51,12 +51,12 @@ const register = (req, res) => {
                         }
 
                         const userName = conn.escape(req.body.username);
-                        const token = req.body.token;
+                        //const token = req.body.token;
                         const userLocation = conn.escape(req.body.location);
                         const userContact = conn.escape(req.body.contact);
                         const userType = conn.escape(req.body.userType);
 
-                        const sql = `INSERT INTO userprofiles (user_name, user_email, token, user_password, user_location, user_contact, user_type) VALUES (${userName}, ${userEmail}, '${token}', ${conn.escape(hash)}, ${userLocation}, ${userContact}, ${userType})`;
+                        const sql = `INSERT INTO userprofiles (user_name, user_email, user_password, user_location, user_contact, user_type) VALUES (${userName}, ${userEmail}, ${conn.escape(hash)}, ${userLocation}, ${userContact}, ${userType})`;
 
                         conn.query(sql, (insertErr) => {
                             if (insertErr) {
@@ -154,6 +154,7 @@ const login = (req,res) => {
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
+
     const sql = `SELECT * FROM userprofiles WHERE user_email = ${conn.escape(req.body.email)};`;
 
     conn.query(sql, (err, result) => {
@@ -163,7 +164,7 @@ const login = (req,res) => {
             });
         }
         if (!result.length) {
-            return res.status(401).send({
+            return res.status(404).send({
                 message: 'Email not found!'
             });
         }
@@ -179,26 +180,33 @@ const login = (req,res) => {
                     }
                     if(bMatch) {
                         //console.log(JWT_SECRET);
-                         const accessToken = jwt.sign({id:result[0]['user_id']},JWT_SECRET,{expiresIn :'1m'});
+                        const updateFCMSql = `UPDATE userprofiles SET token = '${req.body.token}' WHERE user_email = ${conn.escape(req.body.email)}`;
+                        conn.query(updateFCMSql, (tokenErr, tokenRes) => {
+                           if(tokenErr) {
+                                return res.status(500).send({message: 'Error updating token'});
+                           }
+                           const accessToken = jwt.sign({id:result[0]['user_id']},JWT_SECRET,{expiresIn :'1m'});
                          const refreshToken = jwt.sign({id:result[0]['user_id']},REFRESH_TOKEN_SECRET,{expiresIn :'2d'});
                          const refreshTokenExpiration = new Date();
                          refreshTokenExpiration.setDate(refreshTokenExpiration.getDate() + 3);
                          conn.query('UPDATE userprofiles SET refresh_token_expiry = ?, refresh_token = ? WHERE user_id = ?', 
                          [refreshTokenExpiration, refreshToken, result[0]['user_id']],
                          (err, rslt) => {
-                            if(err) {
-                                return res.status(500).send({
-                                    message: 'Internal Server Error'
-                                });
-                            }
+                                if(err) {
+                                    return res.status(500).send({
+                                        message: 'Internal Server Error'
+                                    });
+                                }
                             
-                            return res.status(200).send({
-                               message : 'Logged In',
-                               accessToken, 
-                               refreshToken,
-                               user: result[0]
-                           });
-                         });
+                                return res.status(200).send({
+                                    message : 'Logged In',
+                                    accessToken, 
+                                    refreshToken,
+                                    user: result[0]
+                                });
+                            });
+                        }); 
+                        
                     } else {
                         return res.status(401).send({
                             message:'Password is incorrect'
@@ -209,6 +217,24 @@ const login = (req,res) => {
         }
     )
 }
+
+const logout = (req, res) => {
+    const userId = req.user.id;
+
+    if (!userId) {
+        return res.status(400).send({ message: 'User Id not found' });
+    }
+
+    const logoutSql = 'UPDATE userprofiles SET token = NULL WHERE user_id = ?';
+
+    conn.query(logoutSql, [userId], (err, result) => {
+        if (err) {
+            return res.status(500).send({ message: 'Error during logging out' });
+        }
+
+        return res.status(200).send({ message: 'Logged out' });
+    });
+};
 
 const verifyRefreshToken = (req, res) => {
     const refreshToken = req.body.refreshToken;
@@ -263,7 +289,7 @@ const verifyAccessToken = (req, res, next) => {
 
     jwt.verify(accessToken, JWT_SECRET, (err, user) => {
         if(err) {
-            return res.status(401).send({
+            return res.status(403).send({
                 message: 'Invalid Access Token'
             });
         }
@@ -410,7 +436,8 @@ const updateProfile =(req,res)=>{
         
         //  const token = req.headers.authorization.split(' ')[1];
         //  const decodeToken = jwt.verify(token, JWT_SECRET);
-        const userId = req.params.userId;
+        console.log(`User Id while updating profile: ${req.user.id}`);
+        const userId = req.user.id;
 
          var sql = '', data;
 
@@ -450,5 +477,6 @@ module.exports = {
     forgetPassword,
     forgetPasswordLoad,
     resetPassword,
-    updateProfile
+    updateProfile,
+    logout
 };

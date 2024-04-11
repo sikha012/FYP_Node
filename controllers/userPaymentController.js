@@ -11,7 +11,7 @@ exports.createPayment = (req, res) => {
     }
 
     const newPayment = new UserPayment({
-        userId: req.body.userId,
+        userId: req.user.id,
         orderId: req.body.orderId,
         grandTotal: req.body.grandTotal,
     });
