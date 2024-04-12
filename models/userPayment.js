@@ -85,4 +85,24 @@ UserPayment.createPayment = (newPayment, token, result) => {
     });
 };
 
+UserPayment.getAllPaymentDetails = (result) => {
+    const query = `
+    SELECT up.*, u.user_name, o.order_date, o.total_amount, o.order_status 
+    FROM userpayments up
+    JOIN userprofiles u ON up.user_id = u.user_id
+    JOIN orders o ON up.order_id = o.order_id;`;
+
+    conn.query(query, (err, res) => {
+        if (err) {
+            console.error(`Error: ${err}`);
+            result(err, null);
+            return;
+        }
+
+        console.log("Retrieved all payment details successfully");
+        result(null, res);
+    });
+};
+
+
 module.exports = UserPayment;

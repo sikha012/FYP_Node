@@ -52,3 +52,16 @@ exports.createPayment = (req, res) => {
         }
     });
 };
+
+exports.getAllPaymentDetails = (req, res) => {
+    UserPayment.getAllPaymentDetails((err, data) => {
+        if (err) {
+            console.error(`Error retrieving payment details: ${err.message}`);
+            return res.status(500).send({
+                message: err.message || "Some error occurred while retrieving payment details."
+            });
+        }
+
+        res.status(200).send(data);
+    });
+};

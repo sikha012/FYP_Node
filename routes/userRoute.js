@@ -51,6 +51,10 @@ router.post('/refresh-token', userController.verifyRefreshToken);
 
 router.get('/get-user', isAuth, userController.getUser);
 
+router.get('/users', userController.getAllUsers);
+
+router.post('/users/filter', userController.getUsersByFilter);
+
 router.post('/updateFCMtoken/:userId', forgetValidation, userController.updateFCMToken);
 
 router.post('/forget-password', forgetValidation, userController.forgetPassword);

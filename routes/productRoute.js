@@ -51,7 +51,7 @@ router.post('/product', isAuth, (req, res) => {
     });
 });
 
-router.put('/product/:productId', isAuth, (req, res) => {
+router.put('/product/:productId',  (req, res) => {
     upload(req, res, (err) => {
         if (err) {
             res.status(400).send({ message: err });

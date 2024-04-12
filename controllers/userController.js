@@ -218,6 +218,7 @@ const login = (req,res) => {
     )
 }
 
+
 const logout = (req, res) => {
     const userId = req.user.id;
 
@@ -309,6 +310,49 @@ const getUser = (req, res) => {
         return res.status(200).send(result[0]);
     });
 }
+
+const getAllUsers = (req, res) => {
+    conn.query('SELECT * FROM userprofiles', (err, results) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Database error', error: err });
+        }
+        console.log(results);
+        return res.status(200).send(results);
+    });
+};
+
+const getUsersByFilter = (req, res) => {
+    const { userType, userName } = req.body;
+    let filters = [];
+    let sql = 'SELECT * FROM userprofiles';
+
+    if (userType) {
+        let escapedUserType = conn.escape(userType);
+        filters.push(`user_type = ${escapedUserType}`);
+    }
+
+    if (userName) {
+        let escapedUserName = conn.escape(`%${userName}%`);
+        filters.push(`user_name LIKE ${escapedUserName}`);
+    }
+
+    if (filters.length) {
+        sql += ` WHERE ${filters.join(' AND ')}`;
+    }
+
+    conn.query(sql, (err, results) => {
+        if (err) {
+            return res.status(500).send({ message: 'Database error', error: err });
+        }
+        if (results.length === 0) {
+            return res.status(404).send({ message: 'No users found with the provided filters' });
+        }
+        return res.status(200).send(results);
+    });
+};
+
+
 
 const verifyMail = (req, res) => {
     var token = req.query.token;
@@ -473,6 +517,8 @@ module.exports = {
     verifyRefreshToken,
     verifyAccessToken,
     getUser,
+    getAllUsers,
+    getUsersByFilter,
     verifyMail,
     forgetPassword,
     forgetPasswordLoad,
