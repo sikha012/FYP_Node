@@ -53,10 +53,10 @@ async function verifyOTP(params, callback) {
     let localPart = emailWithDot.substring(0, atIndex);
     let domainPart = emailWithDot.substring(atIndex);
 
-    // Replace only the first dot in the local part of the email
+  
     localPart = localPart.replace('.', '');
 
-    // Concatenate the modified local part with the domain part
+ 
     const emailWithoutFirstDot = localPart + domainPart;
     let data = `${emailWithoutFirstDot}.${params.otp}.${expires}`;
 

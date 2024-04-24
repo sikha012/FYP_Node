@@ -47,7 +47,7 @@ ProductCategory.updateById = (id, productCategory, result) => {
             }
             
             if (res.affectedRows == 0) {
-                // No rows affected means the ID didn't exist
+                
                 result({ kind: "not_found" }, null);
                 return;
             }
@@ -91,7 +91,7 @@ ProductCategory.updateById = (id, productCategory, result) => {
                 return;
             }
             
-            // No result for the given ID
+      
             result({ kind: "not_found" }, null);
         });
     };

@@ -11,7 +11,7 @@ exports.createPayment = (req, res) => {
     }
 
     const newPayment = new UserPayment({
-        userId: req.user.id,
+        userId: req.body.userId,
         orderId: req.body.orderId,
         grandTotal: req.body.grandTotal,
     });
@@ -35,10 +35,10 @@ exports.createPayment = (req, res) => {
                 try {
                     const notificationDate = new Date().toISOString();
                     await sendNotification.sendNotification(token, 
-                        'Order Placed', `An order has been placed for your product`, {
+                        'Order Placed', `An order has been placed for GWAWG Cat Harness`, {
                             type: "orderPlaced",
                             title: "Order Placed",
-                            body: `An order has been placed for your product`,
+                            body: `An order has been placed for GWAWG Cat Harness`,
                             notificationDate: notificationDate,
                             eventDate: new Date().toISOString()
                         });

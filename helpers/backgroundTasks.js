@@ -7,17 +7,17 @@ const startBackgroundTasks = async () => {
   while(true) {
     await sleep(2000);
 
-    // Array to hold the number of days ahead to check
+   
     const daysAheadArray = [6, 3, 1];
 
     for (let daysAhead of daysAheadArray) {
-      // Calculate the target date
+    
       let targetDate = new Date();
       targetDate.setDate(targetDate.getDate() + daysAhead);
       targetDate = targetDate.toISOString().split('T')[0];
       console.log(`Checking for records with event_date = ${targetDate}`);
 
-      // Fetch records where the event_date is daysAhead days ahead
+
       const query = `SELECT PH.history_id AS history_id, 
                     PH.event_name AS event_name, 
                     PH.event_description AS event_description, 

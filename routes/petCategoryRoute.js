@@ -4,7 +4,7 @@ const router = express.Router();
 
 const {create, getAll, getById, updateById, deleteById, deleteAll} = require('../controllers/petCategoryController');
 
-// Pet Category Routes
+
 router.post('/petCategory', create);
 router.get('/petCategory', getAll);
 router.get('/petCategory/:petCategoryId', getById);

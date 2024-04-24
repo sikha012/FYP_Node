@@ -13,7 +13,7 @@ const OrderDetails = function (orderDetails){
     this.quantity = orderDetails.quantity,
     this.lineTotal = orderDetails.lineTotal
 
-    //seller to be integrated
+ 
 }
 
 Order.create = (newOrder, result) => {
@@ -162,6 +162,7 @@ OrderDetails.getOrdersToDeliver = (result) => {
         result({ kind: "not_found" }, null);
     });
 }
+
 
 OrderDetails.updateOrderStatus = (status, orderDetailId, result) => {
     conn.query("UPDATE orderdetails SET status = ? WHERE orderdetail_id = ?", 

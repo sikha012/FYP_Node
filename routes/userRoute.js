@@ -49,7 +49,7 @@ router.post('/refresh-token', userController.verifyRefreshToken);
 //     res.send({userId: user_id});
 // });
 
-router.get('/get-user', isAuth, userController.getUser);
+router.get('/get-user', isAuth,userController.getUser);
 
 router.get('/users', userController.getAllUsers);
 
@@ -61,6 +61,6 @@ router.post('/forget-password', forgetValidation, userController.forgetPassword)
 
 router.post('/update-profile/:userId', upload.single('image'), updateProfileValidation, isAuth, userController.updateProfile);
 
-router.post('/logout', isAuth, userController.logout);
+router.post('/logout',  isAuth, userController.logout);
 
 module.exports = router;

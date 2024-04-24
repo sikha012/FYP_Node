@@ -486,11 +486,11 @@ const updateProfile =(req,res)=>{
          var sql = '', data;
 
          if(req.file != null){
-            sql = 'UPDATE userprofiles SET user_name = ?, user_email = ?, profile_image = ? WHERE user_id = ?';
-            data = [req.body.username, req.body.email, 'images/'+req.file.filename, userId];
+            sql = 'UPDATE userprofiles SET user_name = ?, user_email = ?, user_contact = ?, profile_image = ? WHERE user_id = ?';
+            data = [req.body.username, req.body.email, req.body.contact, 'images/'+req.file.filename, userId];
          } else {
-            sql = 'UPDATE userprofiles SET user_name = ?, user_email = ? WHERE user_id = ?';
-            data = [req.body.username, req.body.email, userId];
+            sql = 'UPDATE userprofiles SET user_name = ?, user_email = ?, user_contact = ? WHERE user_id = ?';
+            data = [req.body.username, req.body.email, req.body.contact, userId];
          }
 
          conn.query(sql, data, function(error, result, fields){

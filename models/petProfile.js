@@ -45,7 +45,7 @@ PetProfile.updateByIdWithImage = (id, petProfile, result) => {
             }
             
             if (res.affectedRows == 0) {
-                // No rows affected means the ID didn't exist
+                
                 result({ kind: "not_found" }, null);
                 return;
             }
@@ -68,7 +68,7 @@ PetProfile.updateByIdWithoutImage = (id, petProfile, result) => {
             }
             
             if (res.affectedRows == 0) {
-                // No rows affected means the ID didn't exist
+                
                 result({ kind: "not_found" }, null);
                 return;
             }
@@ -158,7 +158,7 @@ PetProfile.getHistoryByPetId = (id, result) => {
             return;
         }
         
-        // No result for the given ID
+        
         result({ kind: "not_found" }, null);
     });
 };
@@ -182,8 +182,8 @@ PetProfile.getAllByOwnerId = (id, result) => {
             result(null, res);
             return;
         }
-        
-        // No result for the given ID
+    
+      
         result({ kind: "not_found" }, null);
     });
 };

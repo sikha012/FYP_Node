@@ -91,7 +91,7 @@ PetCategory.updateById = (id, petCategory, result) => {
                 return;
             }
             
-            // No result for the given ID
+       
             result({ kind: "not_found" }, null);
         });
     };

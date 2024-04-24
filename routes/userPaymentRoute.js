@@ -8,7 +8,7 @@ const paymentController = require('../controllers/userPaymentController');
 
 const isAuth = require('../middleware/auth.js');
 
-router.post('/create-payment', isAuth, paymentController.createPayment);
+router.post('/create-payment', paymentController.createPayment);
 
 router.get('/paymentDetails', paymentController.getAllPaymentDetails);
 

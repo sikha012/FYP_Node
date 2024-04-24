@@ -13,7 +13,7 @@ exports.createProduct = (req, res) => {
         image: req.file.filename,
         petCategoryId: req.body.petCategoryId,
         productCategoryId: req.body.productCategoryId,
-        productSellerId: req.user.id
+        productSellerId: req.body.productSellerId
     });
 
     Product.create(newProduct, (error, data) => {

@@ -41,7 +41,16 @@ const filefilter = (req,file,cb) => {
  }).single('petImage');
  
  // Create a new PetProfile
-router.post('/petProfile', isAuth, (req, res) => {
+// router.post('/petProfile', isAuth, (req, res) => {
+//     upload(req, res, (err) => {
+//         if(err) {
+//             res.status(400).send({ message: err });
+//         } else {
+//             petProfileController.createPetProfile(req, res);
+//         }
+//     });
+// });
+ router.post('/petProfile',  (req, res) => {
     upload(req, res, (err) => {
         if(err) {
             res.status(400).send({ message: err });
@@ -51,7 +60,8 @@ router.post('/petProfile', isAuth, (req, res) => {
     });
 });
 
-// Update a PetProfile by ID
+
+
 router.put('/petProfile/:petId', isAuth, (req, res) => {
     upload(req, res, (err) => {
         if(err) {
@@ -62,7 +72,7 @@ router.put('/petProfile/:petId', isAuth, (req, res) => {
     });
 });
 
-// Get a single PetProfile by ID
+
 router.get('/petProfile/:petId', petProfileController.getPetProfileById);
 
 router.get('/petProfile/owner/:ownerId', petProfileController.getAllByOwnerId);
